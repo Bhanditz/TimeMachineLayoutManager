@@ -28,8 +28,9 @@ class TimeMachineLayoutManager(context: Context, listSize: Int) : LinearLayoutMa
     var lastTop = 0
     var lastLeft = 0
     var lastRight = 0
-    var lastHeight = 0
-    var lastWidth = 0
+
+    var diff = 0
+    var diff2 = 0
 
     init {
         // ひとまずvertical
@@ -109,8 +110,10 @@ class TimeMachineLayoutManager(context: Context, listSize: Int) : LinearLayoutMa
                     val kai = Math.atan((halfHeight + firstHeight) / halfWidth)
 
                     val diffHeight = m / elementNum * counter * Math.sin(theta)
+                    diff = diffHeight.toInt()
                     val diffWidth = m / elementNum * counter * Math.cos(theta)
                     val diffHeight2 = diffWidth * Math.tan(kai)
+                    diff2 = diffHeight2.toInt()
 
                     val top = firstTop - diffHeight
                     val left = firstLeft + diffWidth
@@ -160,7 +163,7 @@ class TimeMachineLayoutManager(context: Context, listSize: Int) : LinearLayoutMa
             // スクロールの分だけ要素全体を移動
             offsetChildrenVertical(-dy)
 
-            if (getDecoratedBottom(topView) > layoutBottom) {
+            if (getDecoratedBottom(topView) > layoutBottom + diff) {
                 // 一番手前の要素が表示領域をはみ出た時
 
                 if (topPosition >= 0) {
@@ -191,7 +194,7 @@ class TimeMachineLayoutManager(context: Context, listSize: Int) : LinearLayoutMa
 
             // スクロールの分だけ要素全体を移動
             offsetChildrenVertical(-dy)
-            if (getDecoratedTop(backView) < layoutTop) {
+            if (getDecoratedTop(backView) < layoutTop - diff) {
                 // 一番奥の要素が表示領域をはみ出た時
 
                 if (backPosition + 1 < itemCount) {
