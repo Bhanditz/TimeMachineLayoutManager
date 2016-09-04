@@ -107,15 +107,22 @@ class TimeMachineLayoutManager(context: Context, listSize: Int) : LinearLayoutMa
         }
     }
 
-    override fun scrollVerticallyBy(dy: Int, recycler: RecyclerView.Recycler?, state: RecyclerView.State?): Int {
+    /**
+     * スクロールした時に呼ばれる処理
+     * 重いことはやらない
+     */
+    override fun scrollVerticallyBy(dy: Int, recycler: RecyclerView.Recycler, state: RecyclerView.State?): Int {
         // 要素がなかったら0を返してスクロールさせない
         if (childCount <= 0) return 0
 
-        var topPosition = findFirstVisibleItemPosition() // 一番奥の要素のposition 最初は要素数-1
-        var backPosition = findLastVisibleItemPosition() // 一番手前の要素のposition 最初は0
+        var backPosition = findLastVisibleItemPosition() // 一番最初は0
+        var topPosition = findFirstVisibleItemPosition() // 一番最初は要素数-1
 
         var backView = findViewByPosition(backPosition) // 一番奥にある要素のview
         var topView = findViewByPosition(topPosition) // 一番手前にある要素のview
+
+        var backIndex = 0
+        var topIndex = childCount - 1
 
         if (dy < 0) {
             // 下方向へのスクロール
@@ -125,7 +132,19 @@ class TimeMachineLayoutManager(context: Context, listSize: Int) : LinearLayoutMa
 
             if (getDecoratedBottom(topView) < layoutBottom) {
                 // 一番手前の要素が表示領域をはみ出た時
-                removeAndRecycleViewAt(topPosition, recycler)
+                topIndex--
+                backPosition++
+
+                if (topPosition > 0) {
+                    // 一番奥に新しいviewの生成
+                    backView = recycler.getViewForPosition(topPosition - 1)
+                    addView(backView, 0)
+                    measureChildWithMargins(backView, 0, 0)
+                    layoutDecorated(backView, 0, 0, 400, 400)
+
+                    topPosition++
+                    topIndex++
+                }
             }
         } else {
             // 上方向へのスクロール
@@ -134,7 +153,19 @@ class TimeMachineLayoutManager(context: Context, listSize: Int) : LinearLayoutMa
             offsetChildrenVertical(-dy)
             if (getDecoratedTop(backView) > layoutTop) {
                 // 一番奥の要素が表示領域をはみ出た時
-                removeAndRecycleViewAt(backPosition, recycler)
+                backIndex++
+                topPosition--
+
+                if (backPosition + 1 < itemCount) {
+                    // 一番手前に新しいviewの生成
+                    topView = recycler.getViewForPosition(backPosition + 1)
+                    addView(topView, childCount)
+                    measureChildWithMargins(topView, 0, 0)
+                    layoutDecorated(topView, 500, 0, 900, 400)
+
+                    backPosition--
+                    topIndex++
+                }
             }
         }
 
