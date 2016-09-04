@@ -118,8 +118,8 @@ class TimeMachineLayoutManager(context: Context, listSize: Int) : LinearLayoutMa
         var backPosition = findLastVisibleItemPosition() // 一番最初は0
         var topPosition = findFirstVisibleItemPosition() // 一番最初は要素数-1
 
-        var backView = findViewByPosition(backPosition) // 一番奥にある要素のview
-        var topView = findViewByPosition(topPosition) // 一番手前にある要素のview
+        var backView = findViewByPosition(topPosition) // 一番奥にある要素のview
+        var topView = findViewByPosition(backPosition) // 一番手前にある要素のview
 
         var backIndex = 0
         var topIndex = childCount - 1
@@ -130,31 +130,28 @@ class TimeMachineLayoutManager(context: Context, listSize: Int) : LinearLayoutMa
             // スクロールの分だけ要素全体を移動
             offsetChildrenVertical(-dy)
 
-            if (getDecoratedBottom(topView) < layoutBottom) {
+            if (getDecoratedBottom(topView) > layoutBottom) {
                 // 一番手前の要素が表示領域をはみ出た時
-                topIndex--
-                backPosition++
 
-                if (topPosition > 0) {
+                if (topPosition >= 0) {
                     // 一番奥に新しいviewの生成
-                    backView = recycler.getViewForPosition(topPosition - 1)
+                    backView = recycler.getViewForPosition(topPosition)
                     addView(backView, 0)
                     measureChildWithMargins(backView, 0, 0)
                     layoutDecorated(backView, 0, 0, 400, 400)
 
-                    topPosition++
-                    topIndex++
+                    // 一番手前のviewを削除
+                    removeViewAt(childCount - 1)
                 }
+
             }
         } else {
             // 上方向へのスクロール
 
             // スクロールの分だけ要素全体を移動
             offsetChildrenVertical(-dy)
-            if (getDecoratedTop(backView) > layoutTop) {
+            if (getDecoratedTop(backView) < layoutTop) {
                 // 一番奥の要素が表示領域をはみ出た時
-                backIndex++
-                topPosition--
 
                 if (backPosition + 1 < itemCount) {
                     // 一番手前に新しいviewの生成
@@ -163,12 +160,12 @@ class TimeMachineLayoutManager(context: Context, listSize: Int) : LinearLayoutMa
                     measureChildWithMargins(topView, 0, 0)
                     layoutDecorated(topView, 500, 0, 900, 400)
 
-                    backPosition--
-                    topIndex++
+                    // 一番奥のviewを削除
+                    removeViewAt(0)
                 }
             }
         }
 
-        return 0
+        return dy
     }
 }
