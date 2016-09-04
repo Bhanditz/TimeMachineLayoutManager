@@ -12,6 +12,25 @@ class TimeMachineLayoutManager(context: Context, listSize: Int) : LinearLayoutMa
     var layoutTop = 0
     var layoutBottom = 0
 
+    var elementCounterBack = 0
+    var elementCounterTop = 0
+
+    // 一番前の要素のレイアウトのそれぞれの位置や大きさ
+    var firstBottom = 0
+    var firstTop = 0
+    var firstLeft = 0
+    var firstRight = 0
+    var firstHeight = 0
+    var firstWidth = 0
+
+    // 一番奥の要素のレイアウトのそれぞれの位置や大きさ
+    var lastBottom = 0
+    var lastTop = 0
+    var lastLeft = 0
+    var lastRight = 0
+    var lastHeight = 0
+    var lastWidth = 0
+
     init {
         // ひとまずvertical
         orientation = LinearLayoutManager.VERTICAL
@@ -44,13 +63,7 @@ class TimeMachineLayoutManager(context: Context, listSize: Int) : LinearLayoutMa
         val parentHeight = height - paddingTop - paddingBottom
         val parentWidth = width - paddingLeft - paddingRight
 
-        // 一番前の要素のレイアウトのそれぞれの位置や大きさ
-        var firstBottom = 0
-        var firstTop = 0
-        var firstLeft = 0
-        var firstRight = 0
-        var firstHeight = 0
-        var firstWidth = 0
+
 
         // 表示する要素の数
         val elementNum = 4
@@ -78,6 +91,13 @@ class TimeMachineLayoutManager(context: Context, listSize: Int) : LinearLayoutMa
                     layoutBottom = firstBottom
                     layoutTop = firstTop
 
+                    if (counter == elementNum - 1) {
+                        lastTop = firstTop
+                        lastLeft = firstLeft
+                        lastRight = firstRight
+                        lastBottom = firstBottom
+                    }
+
                     layoutDecorated(view, firstLeft, firstTop, firstRight, firstBottom)
                 } else {
                     // 先頭以外のviewの設定
@@ -99,12 +119,22 @@ class TimeMachineLayoutManager(context: Context, listSize: Int) : LinearLayoutMa
 
                     layoutTop = top.toInt()
 
+                    if (counter == elementNum - 1) {
+                        lastTop = top.toInt()
+                        lastLeft = left.toInt()
+                        lastRight = right.toInt()
+                        lastBottom = bottom.toInt()
+                    }
+
                     layoutDecorated(view, left.toInt(), top.toInt(), right.toInt(), bottom.toInt())
                 }
 
                 counter++
             }
         }
+
+        elementCounterBack = elementNum
+        elementCounterTop = itemCount - 1
     }
 
     /**
@@ -135,13 +165,24 @@ class TimeMachineLayoutManager(context: Context, listSize: Int) : LinearLayoutMa
 
                 if (topPosition >= 0) {
                     // 一番奥に新しいviewの生成
-                    backView = recycler.getViewForPosition(topPosition)
+                    backView = recycler.getViewForPosition(elementCounterBack)
                     addView(backView, 0)
                     measureChildWithMargins(backView, 0, 0)
-                    layoutDecorated(backView, 0, 0, 400, 400)
+                    layoutDecorated(backView, lastLeft, lastTop, lastRight, lastBottom)
 
                     // 一番手前のviewを削除
                     removeViewAt(childCount - 1)
+
+                    elementCounterBack++
+                    elementCounterTop++
+
+                    if (elementCounterBack >= itemCount) {
+                        elementCounterBack = 0
+                    }
+
+                    if (elementCounterTop >= itemCount) {
+                        elementCounterTop = 0
+                    }
                 }
 
             }
@@ -155,13 +196,24 @@ class TimeMachineLayoutManager(context: Context, listSize: Int) : LinearLayoutMa
 
                 if (backPosition + 1 < itemCount) {
                     // 一番手前に新しいviewの生成
-                    topView = recycler.getViewForPosition(backPosition + 1)
+                    topView = recycler.getViewForPosition(elementCounterBack)
                     addView(topView, childCount)
                     measureChildWithMargins(topView, 0, 0)
-                    layoutDecorated(topView, 500, 0, 900, 400)
+                    layoutDecorated(topView, firstLeft, firstTop, firstRight, firstBottom)
 
                     // 一番奥のviewを削除
                     removeViewAt(0)
+
+                    elementCounterBack--
+                    elementCounterTop--
+
+                    if (elementCounterBack < 0) {
+                        elementCounterBack = itemCount - 1
+                    }
+
+                    if (elementCounterTop < 0) {
+                        elementCounterTop = itemCount - 1
+                    }
                 }
             }
         }
