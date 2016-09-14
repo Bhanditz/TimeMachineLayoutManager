@@ -65,7 +65,6 @@ class TimeMachineLayoutManager(context: Context, listSize: Int) : LinearLayoutMa
         val parentWidth = width - paddingLeft - paddingRight
 
 
-
         // 表示する要素の数
         val elementNum = 4
 
@@ -163,6 +162,19 @@ class TimeMachineLayoutManager(context: Context, listSize: Int) : LinearLayoutMa
             // スクロールの分だけ要素全体を移動
             offsetChildrenVertical(-dy)
 
+            /*
+            // 各要素のスケール調整
+            for (i in 0..childCount - 1) {
+                val view = findViewByPosition(i)
+
+                val left = getDecoratedLeft(view)
+                val right = getDecoratedRight(view)
+                val top = getDecoratedTop(view)
+                val bottom = getDecoratedBottom(view)
+
+                layoutDecorated(view, )
+            }*/
+
             if (getDecoratedBottom(topView) > layoutBottom + diff) {
                 // 一番手前の要素が表示領域をはみ出た時
 
@@ -199,7 +211,7 @@ class TimeMachineLayoutManager(context: Context, listSize: Int) : LinearLayoutMa
 
                 if (backPosition + 1 < itemCount) {
                     // 一番手前に新しいviewの生成
-                    topView = recycler.getViewForPosition(elementCounterBack)
+                    topView = recycler.getViewForPosition(elementCounterTop)
                     addView(topView, childCount)
                     measureChildWithMargins(topView, 0, 0)
                     layoutDecorated(topView, firstLeft, firstTop, firstRight, firstBottom)
@@ -221,6 +233,6 @@ class TimeMachineLayoutManager(context: Context, listSize: Int) : LinearLayoutMa
             }
         }
 
-        return dy
+        return dy/dy
     }
 }
