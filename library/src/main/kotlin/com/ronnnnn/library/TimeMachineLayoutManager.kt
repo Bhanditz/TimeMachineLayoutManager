@@ -39,6 +39,8 @@ class TimeMachineLayoutManager(context: Context, listSize: Int) : LinearLayoutMa
 
     val elementNum = 4
 
+    val alphaParam = 1.5f
+
     init {
         // ひとまずvertical
         orientation = LinearLayoutManager.VERTICAL
@@ -174,7 +176,8 @@ class TimeMachineLayoutManager(context: Context, listSize: Int) : LinearLayoutMa
             // スクロールの分だけ要素全体を移動
             offsetChildrenVertical(-dy)
 
-            topView.alpha = topView.alpha / 1.5f
+            // 透明度の設定
+            topView.alpha = topView.alpha / alphaParam
 
             // 各要素のスケール調整
             for (i in 0..itemCount) {
@@ -231,6 +234,9 @@ class TimeMachineLayoutManager(context: Context, listSize: Int) : LinearLayoutMa
 
             // スクロールの分だけ要素全体を移動
             offsetChildrenVertical(-dy)
+
+            // 透明度の設定
+            topView.alpha = topView.alpha * alphaParam
 
             // 各要素のスケール調整
             for (i in 0..itemCount) {
