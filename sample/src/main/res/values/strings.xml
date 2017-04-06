@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">TimeMachineLayoutManager</string>
+
+    <string name="color_name_1">Red</string>
+    <string name="color_name_2">Pink</string>
+    <string name="color_name_3">Purple</string>
+    <string name="color_name_4">Deep Purple</string>
+    <string name="color_name_5">Indigo</string>
+    <string name="color_name_6">Blue</string>
+    <string name="color_name_7">Light Blue</string>
+    <string name="color_name_8">Cyan</string>
+    <string name="color_name_9">Teal</string>
+    <string name="color_name_10">Green</string>
+    <string name="color_name_11">Light Green</string>
+    <string name="color_name_12">Lime</string>
+    <string name="color_name_13">Yellow</string>
+    <string name="color_name_14">Amber</string>
+    <string name="color_name_15">Orange</string>
+    <string name="color_name_16">Deep Orange</string>
+    <string name="color_name_17">Brown</string>
+    <string name="color_name_18">Green</string>
+    <string name="color_name_19">Blue Grey</string>
+</resources>
